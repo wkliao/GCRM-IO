@@ -1,44 +1,46 @@
 # PnetCDF I/O Benchmark using GCRM Application I/O Kernel
 
-This benchmark program is developed to evaluate the performance of
-the I/O kernel of Global Cloud Resolving Model (GCRM)
-simulation codes. GCRM was developed at the Colorado State University
+This software benchmarks the performance of
+[PnetCDF](https://parallel-netcdf.github.io/) method implementing the I/O
+kernel of Global Cloud Resolving Model (GCRM) simulation codes. GCRM was
+developed at the Colorado State University
 (http://kiwi.atmos.colostate.edu/gcrm). GCRM's I/O module, called GIO library,
 was developed at Pacific Northwest National Laboratory
 (https://svn.pnl.gov/gcrm). GCRM and GIO are written in Fortran90.
 
 This software package extracts the I/O kernel from GCRM and converts it into C
-to have more flexible parameter settings (e.g. number of MPI processes, max level) and
-dynamic memory allocation for buffer management.
+for more flexible parameter settings (e.g. number of MPI processes, max level)
+and dynamic memory allocation for buffer management.
 
 ## Note on memory requirement
 GCRM is a memory-intensive parallel application which allocates a significant
-amount of memory per process to run. This I/O kernel preserves the same
+amount of memory per process when running. This software preserves such
 characteristics to reflect its high demands on memory space.  For detailed
 information about the variable sizes and the amount of memory required, please
-refer to documents in directory ./doc.
+refer to documents in directory `./doc`.
 
 ## Software requirements
  1. MPI compiler
- 2. Parallel netCDF version 1.4.0 or above
+ 2. PnetCDF version 1.4.0 or later
 
 ## Build instructions
-To build the software, run commands below.
+Run commands below.
 ```
 ./configure --with-pnetcdf=/path/to/PnetCDF MPICC=your_MPI_C_compiler
 make
-make install
 ```
-It creates an executable file named `gcrm_io` under directory ./run together
-with a few input parameter files.
+It creates an executable file named `gcrm_io` under directory `./run`.
 
 ## Run Instructions
-The input parameter files under directory `./run` can be customized to run
-different problem sizes.  In particular, `gcrm_io` takes one command-line
-argument which is the file name that contains all the parameters settings. If
-no command-line argument is given, the default file name `zgrd.in` is assumed.
-The following parameter files are also provided, each specifying a particular
-problem size.
+Several input parameter files are available under directory `./inputs` which
+should be copied over to directory `.run`. The parameter file can be customized
+to run different problem sizes.
+
+The executable `gcrm_io` takes one command-line argument which is the input
+parameter file name that contains all the parameters settings. If no
+command-line argument is given, it reads the file named `zgrd.in`. The
+following parameter files are provided, each specifying a particular problem
+size.
 ```
 zgrd.in.r6     - refine level ==  6, corresponding to grid size 112    Km
 zgrd.in.r7     - refine level ==  7, corresponding to grid size  55.9  Km
@@ -47,35 +49,31 @@ zgrd.in.r9     - refine level ==  9, corresponding to grid size  14.0  Km
 zgrd.in.r10    - refine level == 10, corresponding to grid size   6.98 Km
 zgrd.in.r11    - refine level == 11, corresponding to grid size   3.49 Km
 ```
-Please edit the input parameter file and change the following two parameters
-`output_path` and `cdf_output_path` to the locations where you would like the
-output files to be saved.
 
-## Input parameter file
-*zgrd.in* - default parameter file, if no command-line parameter file is given
-
-## Parameters determine the number of solution variables
-Parameter `io_desc_file` points to file `ZGrd.desc`, which describes all GCRM variables.
+### Parameters determine the number of solution variables
+Parameter `io_desc_file` points to file `ZGrd.desc`, which describes all GCRM
+variables, including all grid and field variables with information about their
+size, type, and dimension.
 
 Parameter `io_config_file` points to a file describing the I/O configuration.
 
-Parameter `physics_mode` indicates if additional physics variables will
-be added to the simulation. Enabling this mode will demand more memory
-space on each MPI process.
+Parameter `physics_mode` indicates if additional physics variables will be
+added to the benchmark. Enabling this mode will demand more memory space on
+each MPI process.
 
-Four pre-defined configurations are provided.
+Four pre-defined configurations are provided in `./inputs`.
 ```
 ZGrd.LZ.fcfg.nophys      writes 11 solution variables, one variable per file,
                          no physics variables. Use it for testing only.
-ZGrd.CP.lyr.fcfg         writes 38 solution variables, one per nc file.
+ZGrd.CP.lyr.fcfg         writes 38 solution variables, one per netCDF file.
                          It can only be used when physics_mode is enabled.
-ZGrd.CP.lyr.fcfg.groups  writes 38 solution variables in 12 nc files,
+ZGrd.CP.lyr.fcfg.groups  writes 38 solution variables in 12 netCDF files,
                          some variables that are often accessed together are
                          saved in the same file. It can only be used when
                          physics_mode is enabled.
-ZGrd.CP.lyr.fcfg.one*    writes 38 solution variables in one nc file, all
+ZGrd.CP.lyr.fcfg.one*    writes 38 solution variables in one netCDF file, all
                          variables are saved in the same file. It can only be
-                         used when `physics_mode` is enabled.
+                         used when physics_mode is enabled.
 ```
 
 ### Parameter for setting refine level
@@ -83,33 +81,36 @@ ZGrd.CP.lyr.fcfg.one*    writes 38 solution variables in one nc file, all
 level_max
 ```
 ### Parameter for setting frequency of writes
-The following 4 parameters determine the length of simulation
+The following 4 parameters determine/mimic the length of simulation:
  * end_days
  * end_hours
  * end_minutes
  * end_seconds
 
-Together with parameter cdf_output_frequency, the number of writes can be
+Together with parameter `cdf_output_frequency`, the number of writes is
 determined. For example, if the length of simulation is set to 1 minutes
-(end_minutes == 1) and cdf_output_frequency is set to 60 (seconds), then
+(`end_minutes` == 1) and `cdf_output_frequency` is set to 60 (seconds), then
 there will be 2 writes (including one at the initial dump).
 
-Please note that cdf_output_frequency is the amount of time advanced in
-each simulation iteration. Depending on the value of level_max, set
-cdf_output_frequency correspondingly.
+Please note that `cdf_output_frequency` is the amount of time advanced in
+each simulation iteration. Depending on the value of `level_max`, set
+`cdf_output_frequency` correspondingly. Below is the possible value pairs.
 ```
 for level_max        =   3,   4,  5,  6,  7, 8, 9, 10, 11, 12
 cdf_output_frequency = 900, 120, 60, 30, 15, 8, 4,  2,  1,  1
 ```
 
 ### Parameters specify the directories to store the output files
+Users should edit the input parameter file and change the following two
+parameters `output_path` and `cdf_output_path` to the locations where the
+output files are to be saved.
 ```
 parameter "output_path"     points to the path for miscellaneous outputs
 parameter "cdf_output_path" points to the path for netcdf output files
 ```
 
 ### Note on restart options
-Although restart options are provided (see the bottom of file zgrd.in),
+Although restart options are provided (see the bottom of file `zgrd.in`),
 not all of them are supported in this release, in particular, reading part
 is not completed. The only options taking effect are
  * restart_interval
@@ -117,49 +118,52 @@ is not completed. The only options taking effect are
  * restart_overwrite
 
 ### I/O methods
-Currently there are four I/O options (set in parameter `iotype`):
+Currently there are four I/O options (parameter `iotype`):
  * nonblocking_collective
  * nonblocking_independent
  * blocking_collective
  * blocking_independent
 
-which correspond to using PnetCDF nonblocking APIs using collective flush,
-nonblocking APIs using independent flush, blocking collective APIs, and
-blocking independent APIs, respectively. The original GCRM has two
-additional options namely direct and interleaved, but they have not been
-implemented in this benchmark yet.
+which correspond to using PnetCDF nonblocking APIs with collective flush,
+nonblocking APIs with independent flush, blocking collective APIs, and blocking
+independent APIs, respectively. The original GCRM has two additional options
+namely direct and interleaved, but they are not implemented in this benchmark.
 
 ### Number of processes to run and command-line arguments
-
-GCRM runs only on certain numbers of MPI processes, depending on the value
-of sbdmn_iota. The number of processes must be able to divide evenly
+GCRM runs only on certain numbers of MPI processes, depending on the value of
+sbdmn_iota. The number of processes must be able to divide evenly
 ```
 M = 10 x 4 ^ sbdmn_iota
 ```
 `M` is the total number of subdomains. This is to ensure the numbers of
 subdomains assigned to individual MPI processes are the same.
-sbdmn_iota is the first index i of nblocks array below such that nblocks[i]
-is dividible by the number of MPI processes.
+
+`sbdmn_iota` is the first index i of array `nblocks` below such that
+`nblocks[i]` is divisible by the number of MPI processes.
 ```
 int nblocks[10] = {10, 40, 160, 640, 2560, 10240, 40960, 163840, 655360, 2621440};
 ```
-For example, if nprocs = 80, then sbdmn_iota will be 2, because `nblocks[2]` is 160 which is divisible by nprocs.
+For example, if the number of MPI processes, `nprocs`, is 80, then `sbdmn_iota`
+will be set to 2, because `nblocks[2]` will be picked 160 which is the minimum
+number in `nblocks[]` divisible by `nprocs`.
 
-Because GCRM is memory intensive, the number of processes to run for a
-refine level, level_max, must be sufficient large to avoid running out of
-memory. In doc/data\ summary.pdf, the 3rd page shows a table of the
-memory usage for various combinations of number of processes and level_max
-when all physics variables enabled and no restart write is performed.
-Different memory usage may be reported when different setting is used.
+Note that because GCRM is memory intensive, the number of processes to run for
+a refine level, set in `level_max`, must be sufficiently large to avoid running
+out of memory. In `doc/data\ summary.pdf`, the 3rd page shows a table of the
+memory usage for various combinations of number of processes and `level_max`
+when writing all physics variables is enabled and no restart write is
+performed.  The memory usage will be reported for different settings.
 
 Again, the default input parameter file is `zgrd.in` (when no command-line
-argument is given.) Users can also specify a different parameters file,
-such as
+argument is given.) Users can specify a different parameters file, such as
 ```
-mpiexec -n 8 gcrm_io zgrd.in.r6
+mpiexec -n 8 ./gcrm_io zgrd.in.r6
 ```
 
 ## Example output from stdout
+Below is the output on screen of an example run on 20 MPI processes using the
+input files `ZGrd.CP.lyr.fcfg`, `ZGrd.desc`, and `zgrd.in` copied from folder
+`inputs`.
 ```
 % mpiexec -n 20 ./gcrm_io
 
@@ -253,6 +257,53 @@ I/O bandwidth=            47.22 MB/sec  =          45.04 MiB/sec
 memory MAX usage (among 20 procs) =        315.78 MiB
 memory MIN usage (among 20 procs) =        315.48 MiB
 memory AVG usage (among 20 procs) =        315.62 MiB
+```
+
+## Output files created in the output folder.
+```
+% ls -lhgG
+total 3.5G
+-rw------- 1  21M Jul 18 15:24 cloud_ice_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 cloud_water_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 divergence_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 exner_lyr_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 geopotential_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 graupel_mmr_19010101_000000.nc
+-rw------- 1 2.0M Jul 18 15:23 grid.nc
+-rw------- 1  21M Jul 18 15:24 heat_flux_vdiff_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 heating_latent_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 heating_lw_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 heating_lw_cs_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 heating_sw_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 heating_sw_cs_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 ke_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 mass_19010101_000000.nc
+-rw------- 1  83K Jul 18 15:24 olr_19010101_000000.nc
+-rw------- 1  83K Jul 18 15:24 prec_frz_19010101_000000.nc
+-rw------- 1  83K Jul 18 15:24 prec_tot_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 pressure_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 qci_tend_micro_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 qcw_tend_micro_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 qgr_tend_micro_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 qrw_tend_micro_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 qsn_tend_micro_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 qwv_tend_micro_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 rain_mmr_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 rel_vorticity_19010101_000000.nc
+-rw------- 1 1.4G Jul 18 15:24 restart.nc19010101_000000.nc
+-rw------- 1 1.4G Jul 18 15:25 restart.nc19010101_000100.nc
+-rw------- 1  21M Jul 18 15:24 snow_mmr_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 strm_func_19010101_000000.nc
+-rw------- 1  83K Jul 18 15:24 swinc_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 temperature_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 vel_pot_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 vorticity_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 water_vapor_19010101_000000.nc
+-rw------- 1  61M Jul 18 15:24 wind_19010101_000000.nc
+-rw------- 1  41M Jul 18 15:24 wind_crn_ew_19010101_000000.nc
+-rw------- 1  41M Jul 18 15:24 wind_crn_ns_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 wtr_flux_vdiff_19010101_000000.nc
+-rw------- 1  21M Jul 18 15:24 w_vert_19010101_000000.nc
 ```
 
 ## Questions/Comments:
