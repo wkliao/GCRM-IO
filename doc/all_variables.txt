@@ -1,0 +1,42 @@
+# all field variables listed in ZGrd.CP.lyr.fcfg
+# There are 3 kinds of variables: diagnostic, prognostic, and physics
+#
+diag	float relative(time, cells, layers) ;
+diag	float vel_pot(time, cells, layers) ;
+diag	float strm_func(time, cells, layers) ;
+prog	float divergence(time, cells, layers) ;
+diag	float ke(time, cells, layers) ;
+prog	float vorticity(time, cells, layers) ;
+prog	float mass(time, cells, layers) ;
+diag	float pressure(time, cells, interfaces) ;
+prog	float temperature_lyr(time, cells, layers) ;
+diag	float geopotential(time, cells, interfaces) ;
+diag	float u(time, corners, layers, ns_ew) ;
+diag	float v(time, corners, layers, ns_ew) ;
+diag	float wind(time, edges, layers) ;
+prog	float w_vert(time, cells, interfaces) ;
+diag	float exner_lyr(time, cells, layers) ;
+phy	float water_vapor_lyr(time, cells, layers) ;
+phy	float cloud_water_lyr(time, cells, layers) ;
+phy	float rain_mmr_lyr(time, cells, layers) ;
+phy	float cloud_ice_lyr(time, cells, layers) ;
+phy	float snow_mmr_lyr(time, cells, layers) ;
+phy	float graupel_mmr_lyr(time, cells, layers) ;
+phy	float heating_sw_lyr_avg(time, cells, layers) ;
+phy	float heating_lw_lyr_avg(time, cells, layers) ;
+phy	float heating_sw_cs_lyr_avg(time, cells, layers) ;
+phy	float heating_lw_cs_lyr_avg(time, cells, layers) ;
+phy	float heating_latent_lyr_avg(time, cells, layers) ;
+phy	float qwv_tend_micro_lyr_avg(time, cells, layers) ;
+phy	float qci_tend_micro_lyr_avg(time, cells, layers) ;
+phy	float qcw_tend_micro_lyr_avg(time, cells, layers) ;
+phy	float qrw_tend_micro_lyr_avg(time, cells, layers) ;
+phy	float qsn_tend_micro_lyr_avg(time, cells, layers) ;
+phy	float qgr_tend_micro_lyr_avg(time, cells, layers) ;
+phy	float prec_tot_avg(time, cells) ;
+phy	float prec_frz_avg(time, cells) ;
+phy	float olr_avg(time, cells) ;
+phy	float swinc_avg(time, cells) ;
+diag	float heat_flux_vdiff_ifc_avg(time, cells, interfaces) ;
+phy	float wtr_flux_vdiff_ifc_avg(time, cells, interfaces) ;
+

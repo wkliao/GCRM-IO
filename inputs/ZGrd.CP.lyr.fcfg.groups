@@ -1,0 +1,74 @@
+#
+file_prefix "dynamics_"
+field     time
+field     relative
+field     vel_pot
+field     strm_func
+field     divergence
+field     ke
+field     vorticity
+#
+file_prefix "mass_"
+field     time
+field     mass
+#
+file_prefix "pressure_"
+field     time
+field     pressure
+#
+file_prefix "temperature_"
+field     time
+field     temperature_lyr
+#
+file_prefix "geopotential_"
+field     time
+field     geopotential
+#
+file_prefix "wind_"
+field     time
+field     u
+field     v
+field     wind
+field     w_vert
+#
+file_prefix "exner_lyr_"
+field     time
+field     exner_lyr
+#
+file_prefix "water_"
+field     time
+field     water_vapor_lyr
+field     cloud_water_lyr
+field     rain_mmr_lyr
+field     cloud_ice_lyr
+field     snow_mmr_lyr
+field     graupel_mmr_lyr
+#
+file_prefix "heating_"
+field     time
+field     heating_sw_lyr avg
+field     heating_lw_lyr avg
+field     heating_sw_cs_lyr avg
+field     heating_lw_cs_lyr avg
+field     heating_latent_lyr avg
+#
+file_prefix "micro_"
+field     time
+field     qwv_tend_micro_lyr avg
+field     qci_tend_micro_lyr avg
+field     qcw_tend_micro_lyr avg
+field     qrw_tend_micro_lyr avg
+field     qsn_tend_micro_lyr avg
+field     qgr_tend_micro_lyr avg
+#
+file_prefix "surfaces"
+field     time
+field     prec_tot avg
+field     prec_frz avg
+field     olr avg
+field     swinc avg
+#
+file_prefix "turb_flux_"
+field     time
+field     heat_flux_vdiff_ifc avg
+field     wtr_flux_vdiff_ifc avg

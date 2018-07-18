@@ -1,0 +1,40 @@
+file_prefix "zgrd_"
+field     time
+field     relative
+field     vel_pot
+field     strm_func
+field     divergence
+field     ke
+field     w_vert
+field     vorticity
+field     mass
+field     pressure
+field     temperature_lyr
+field     geopotential
+field     u
+field     v
+field     wind
+field     exner_lyr
+field     water_vapor_lyr
+field     cloud_water_lyr
+field     rain_mmr_lyr
+field     cloud_ice_lyr
+field     snow_mmr_lyr
+field     graupel_mmr_lyr
+field     heating_sw_lyr avg
+field     heating_lw_lyr avg
+field     heating_sw_cs_lyr avg
+field     heating_lw_cs_lyr avg
+field     heating_latent_lyr avg
+field     qwv_tend_micro_lyr avg
+field     qci_tend_micro_lyr avg
+field     qcw_tend_micro_lyr avg
+field     qrw_tend_micro_lyr avg
+field     qsn_tend_micro_lyr avg
+field     qgr_tend_micro_lyr avg
+field     prec_tot avg
+field     prec_frz avg
+field     olr avg
+field     swinc avg
+field     heat_flux_vdiff_ifc avg
+field     wtr_flux_vdiff_ifc avg

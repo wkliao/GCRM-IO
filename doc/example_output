@@ -1,0 +1,92 @@
+data::benchmark_c(3:15pm) #521% /usr/bin/time go
+ 0: Unregistered data for file restart.nc
+ 1: while loop num_dumps=1 time_ZGrd=0.000000 gio_default_frequency=30
+ 1: while loop num_dumps=2 time_ZGrd=30.000000 gio_default_frequency=30
+ 1: while loop num_dumps=3 time_ZGrd=60.000000 gio_default_frequency=30
+ 0: ---- MPI file info used ----
+ 0: MPI File Info: [ 0] key =    romio_pvfs2_debugmask, value = 0
+ 0: MPI File Info: [ 1] key =          striping_factor, value = 0
+ 0: MPI File Info: [ 2] key =            striping_unit, value = 0
+ 0: MPI File Info: [ 3] key =   romio_pvfs2_posix_read, value = disable
+ 0: MPI File Info: [ 4] key =  romio_pvfs2_posix_write, value = disable
+ 0: MPI File Info: [ 5] key =   romio_pvfs2_dtype_read, value = disable
+ 0: MPI File Info: [ 6] key =  romio_pvfs2_dtype_write, value = disable
+ 0: MPI File Info: [ 7] key =  romio_pvfs2_listio_read, value = disable
+ 0: MPI File Info: [ 8] key = romio_pvfs2_listio_write, value = disable
+ 0: MPI File Info: [ 9] key =           cb_buffer_size, value = 16777216
+ 0: MPI File Info: [10] key =            romio_cb_read, value = enable
+ 0: MPI File Info: [11] key =           romio_cb_write, value = enable
+ 0: MPI File Info: [12] key =                 cb_nodes, value = 1
+ 0: MPI File Info: [13] key =        romio_no_indep_rw, value = true
+ 0: MPI File Info: [14] key =             romio_cb_pfr, value = disable
+ 0: MPI File Info: [15] key =        romio_cb_fr_types, value = aar
+ 0: MPI File Info: [16] key =    romio_cb_fr_alignment, value = 1
+ 0: MPI File Info: [17] key =    romio_cb_ds_threshold, value = 0
+ 0: MPI File Info: [18] key =        romio_cb_alltoall, value = automatic
+ 0: MPI File Info: [19] key =       ind_rd_buffer_size, value = 4194304
+ 0: MPI File Info: [20] key =            romio_ds_read, value = automatic
+ 0: MPI File Info: [21] key =           romio_ds_write, value = disable
+ 0: MPI File Info: [22] key =           cb_config_list, value = *:1
+ 0: MPI File Info: [23] key =     nc_header_align_size, value = 2048
+ 0: MPI File Info: [24] key =        nc_var_align_size, value = 1
+ 0: GIO: ----------------------------------------------------------
+ 0: GIO statistics: (cumulative across all MPI processes)
+ 0: GIO: total_time_in_API                           1402.3362
+ 0: GIO: time_in_nf_put_var                             0.0000
+ 0: GIO: time_in_nf_put_var_grid                        9.6446
+ 0: GIO: time_in_nf_put_att                             0.0013
+ 0: GIO: time_in_nf_def_dim                             0.0004
+ 0: GIO: time_in_nf_def_var                             0.0002
+ 0: GIO: time_in_update_time                            0.0050
+ 0: GIO: time_in_nf_create                             23.9765
+ 0: GIO: time_in_nf_open                               77.2030
+ 0: GIO: time_in_nf_close                               1.3501
+ 0: GIO: time_in_nf_enddef                              0.0471
+ 0: GIO: time_in_nf_inq_varid                           0.0431
+ 0: GIO: time_in_nf_inq_dimlen                          0.0000
+ 0: GIO: time_in_nf_iput                                8.6614
+ 0: GIO: time_in_nf_iget                                0.0000
+ 0: GIO: time_in_nf_wait                              886.4983
+ 0: GIO: time_in_API_copy                               1.5769
+ 0: GIO: time_in_avgs                                   3.4717
+ 0: GIO: ----------------------------------------------------------
+ 0: GIO: bytes_API_write (Bytes):                   4794152308
+ 0: GIO: bytes_API_write (MiB):                      4572.0599
+ 0: GIO: bytes_API_write (GiB):                         4.4649
+ 0: GIO: bandwidth for writes (MiB/sec):               52.1651
+ 0: GIO: bandwidth for writes (GiB/sec):                0.0509
+ 0: GIO: ----------------------------------------------------------
+ 0: ----  Run-time parameters ---------------------------------
+ 0: ----  Number of processes                            = 16
+ 0: ----  level_max  (global horizontal grid resolution) = 6
+ 0: ----  sbdmn_iota                                     = 2
+ 0: ----  level_glbl                                     = 3
+ 0: ----  km         (number of vertical layers)         = 256
+ 0: ----  cell_max   (global number of cells)            = 40962
+ 0: ----  im         (local  number of cells)            = 18
+ 0: ----  jm         (local  number of cells)            = 18
+ 0: ----  nsdm_glbl  (global number of blocks)           = 160
+ 0: ----  nsdm       (local  number of blocks)           = 10
+ 0: ----  using physics variables                        = enabled
+ 0: ----  number of files written                        = 39
+ 0: ----  number of grid  variables written              = 16
+ 0: ----  number of field variables written              = 38
+ 0: ----  number of snapshot dumps                       = 3
+ 0: ---------------------------------------------------------------
+ 0: Timing results (max among all processes)
+ 0: init     time=             1.13 sec
+ 0: Max comp time=            10.15 sec
+ 0: Max I/O  time=            90.93 sec
+ 0: final    time=             0.13 sec
+ 0: ---------------------------------------------------------------
+ 0: I/O    amount=          4794.20 MB      =        4572.10 MiB
+ 0: I/O bandwidth=            52.72 MB/sec  =          50.28 MiB/sec
+ 0: I/O    amount=             4.79 GB      =           4.46 GiB
+ 0: I/O bandwidth=             0.05 GB/sec  =           0.05 GiB/sec
+ 0: ---------------------------------------------------------------
+ 0: memory MAX usage (among 16 procs) =       1241.65 MiB
+ 0: memory MIN usage (among 16 procs) =       1239.80 MiB
+ 0: memory AVG usage (among 16 procs) =       1240.34 MiB
+0.09user 0.04system 1:43.96elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+4511minor)pagefaults 0swaps
+

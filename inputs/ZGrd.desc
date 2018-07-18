@@ -1,0 +1,1552 @@
+######################################################################################
+# IO Descriptor file for ZGrd code
+#
+# There are separate descriptor files for ZGrd because of the need to support two 
+# versions of the thermodynamic vertical structure:  the Lorenz grid which puts theta 
+# and wtr at the layers, and Charney-Phillips which puts them at the interfaces (the 
+# original code was Charney-Phillips)
+#
+# Arbitrary metadata can be added by adding key/value pairs to any descriptor
+# isgridvar flags variables that should be included in the grid defn file.
+# restart flags variables that should be included in restart output
+#
+# IMPORTANT
+# Where used, the slice directive must follow the dimension directive
+######################################################################################
+
+property title "Test hydrostatic model with API"
+property institution "PNNL"
+property source "hydrostatic model, test version"
+property references "Not Available"
+property comment "Some appropriate comment"
+
+
+##########
+# Time
+##########
+name time
+type double
+units "days since 1901-01-01"
+long_name "Time"
+dimension time
+standard_name time
+calendar "no leap year"
+axis "T"
+restart
+
+##########
+# Grid Discovery
+##########
+name                    grid
+type                    integer
+long_name               "grid specification metadata"
+standard_name           mesh_topology
+external_ref            "some uri"
+cell_type               hex
+index_start             0s
+face_edge_connectivity  cell_edges
+face_node_connectivity  cell_corners
+face_face_connectivity  cell_neighbors
+edge_node_connectivity  edge_corners
+face_coordinates        "grid_center_lon grid_center_lat"
+node_coordinates        "grid_corner_lon grid_corner_lat"
+edge_coordinates        "grid_edge_lon grid_edge_lat"
+z                       "layers,interfaces"
+no_data                 "true"
+isgridvar
+
+##########
+# Vertical
+##########
+name layers
+type float
+units K
+long_name "Vertical layers, in terms of pressure"
+positive "down"
+axis "Z"
+dimension layers
+isgridvar
+
+name interfaces
+type float
+units K
+long_name "Vertical interfaces, in terms of pressure"
+positive "down"
+axis "Z"
+dimension interfaces
+isgridvar
+
+
+##########
+# Geometry
+##########
+name grid_center_lat
+type float
+units radians
+standard_name latitude
+bounds corner_cell_map_lat
+long_name "Latitude of cell center"
+dimension cells
+isgridvar
+
+name grid_center_lon
+type float
+units radians
+long_name "Longitude of cell center"
+standard_name longitude
+bounds corner_cell_map_lon
+dimension cells
+isgridvar
+
+name grid_corner_lat
+type float
+units radians
+long_name "Latitude of unique cell corners"
+dimension cells i_cell_corners
+isgridvar
+
+name grid_corner_lon
+type float
+units radians
+long_name "Longitude of unique cell corners"
+dimension cells i_cell_corners
+isgridvar
+
+name grid_edge_lat
+type float
+units radians
+long_name "Latitude of unique cell edge centers"
+dimension cells i_cell_edges
+isgridvar
+
+name grid_edge_lon
+type float
+units radians
+long_name "Longitude of unique cell edge centers"
+dimension cells i_cell_edges
+isgridvar
+
+
+##########
+# Topology
+##########
+name cell_corners
+type integer
+long_name "Indices of cell corners"
+traverse "counter-clockwise"
+dimension cells cellcorners
+isgridvar
+
+name cell_edges
+type integer
+long_name "Indices of cell edges"
+traverse "counter-clockwise"
+dimension cells celledges
+isgridvar
+
+name edge_corners
+type integer
+long_name "Corners that define this edge"
+dimension endpoints i_uniq_edge
+isgridvar
+
+name cell_neighbors
+type integer
+units unitless
+long_name "List of neighbors to this cell"
+traverse "counter-clockwise"
+dimension cells cellneighbors
+isgridvar
+
+name area
+units square radians
+long_name "Cell area"
+dimension cells
+type float
+isgridvar
+
+
+##########
+# Convenience Grid Data
+##########
+name corner_cell_map_lat
+type float
+units radians
+long_name "Latitude of cell corner"
+dimension cells cellcorners
+isgridvar
+
+name corner_cell_map_lon
+type float
+units radians
+long_name "Longitude of cell corner"
+dimension cells cellcorners
+isgridvar
+
+##########
+# Data
+##########
+
+name pressure
+type float
+units Pa
+long_name "Pressure"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name clus_mask
+type float
+units none
+long_name "Cluster mask"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+dimension time cells 
+
+name exner_ifc
+type float
+long_name "Exner field at ifc"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name exner_lyr
+type float
+long_name "Exner field at lyr"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name w_vert
+type float
+units K
+long_name "Vertical velocity"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces nprog
+
+name temperature_ifc
+type float
+units K
+long_name "Potential temperature"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces nprog
+
+name temperature_lyr
+type float
+units K
+long_name "Potential temperature"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers nprog
+
+name geopotential
+type float
+units m**2/sec**2
+long_name "Geo Potential"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name u
+type float
+units m/sec
+long_name "U wind component at cell corners"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location corner
+z layers
+dimension time ns_ew i_uniq_corner layers
+slice component 1
+
+name v
+type float
+units m/sec
+long_name "V wind component at cell corners"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location corner
+z layers
+dimension time ns_ew i_uniq_corner layers
+slice component 2
+
+name wind
+type float
+units m/sec
+long_name "Wind component at faces"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location edge
+z layers
+dimension time cells i_cell_edges layers
+
+name relative
+type float
+units sec**-1
+long_name "Relative vorticity"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name relative_edge
+type float
+units sec**-1
+long_name "Relative vorticity from edge winds"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name strm_func
+type float
+units m**2/sec
+long_name "Stream function"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name vel_pot
+type float
+units m**2/sec
+long_name "Velocity potential"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name ke
+type float
+units J kg**-1
+long_name "Kinetic energy"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name q_heating
+type float
+units K/sec
+long_name "Heating rate"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name divergence
+type float
+units sec**-1
+long_name "Divergence"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers nprog
+
+name divergence_edge
+type float
+units sec**-1
+long_name "Divergence from edge winds"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers nprog
+
+name vorticity
+type float
+units sec**-1
+long_name "Vorticity"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers nprog
+
+name pot_tmp_adv
+type float
+units K
+long_name "Potential temperature modified by horizontal advection"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name mass
+type float
+units  Pa/K
+long_name "Mass or pseudo-density"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers nprog
+
+name divergence
+type float
+units sec**-1
+long_name "Divergence"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers nprog
+
+name mass_flux
+type float
+units Pa/(K*sec)
+long_name "Mass flux"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location edge
+z layers
+dimension time cells i_cell_edges layers
+
+name flux
+type float
+units Pa/(K*sec)
+long_name "Flux"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location edge
+z layers
+dimension time cells i_cell_edges layers
+
+name mass_flux_ifc
+type float
+units Pa/(K*sec)
+long_name "Mass flux at interfaces"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location edge
+z interfaces
+dimension time cells i_cell_edges interfaces
+
+name flux_ifc
+type float
+units Pa/(K*sec)
+long_name "Flux at interfaces"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location edge
+z interfaces
+dimension time cells i_cell_edges interfaces
+
+name tracer1
+type float
+units kg kg^-1
+long_name "1st ratio of passive tracers"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name tracer2
+type float
+units kg kg^-1
+long_name "2nd ratio of passive tracers"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name tracer3
+type float
+units kg kg^-1
+long_name "3rd ratio of passive tracers"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name tracer4
+type float
+units kg kg^-1
+long_name "4th ratio of passive tracers"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name water_vapor_ifc
+type float
+units kg kg^-1
+long_name "Water vapor mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name water_vapor_lyr
+type float
+units kg kg^-1
+long_name "Water vapor mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name cloud_water_ifc
+type float
+units kg kg^-1
+long_name "Cloud water mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name cloud_water_lyr
+type float
+units kg kg^-1
+long_name "Cloud water mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name rain_mmr_ifc
+type float
+units kg kg^-1
+long_name "Rain mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name rain_mmr_lyr
+type float
+units kg kg^-1
+long_name "Rain mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name cloud_ice_ifc
+type float
+units kg kg^-1
+long_name "Cloud ice mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name cloud_ice_lyr
+type float
+units kg kg^-1
+long_name "Cloud ice mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name snow_mmr_ifc
+type float
+units kg kg^-1
+long_name "Snow mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name snow_mmr_lyr
+type float
+units kg kg^-1
+long_name "Snow mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name graupel_mmr_ifc
+type float
+units kg kg^-1
+long_name "Graupel mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name graupel_mmr_lyr
+type float
+units kg kg^-1
+long_name "Graupel mass mixing ratio"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name heating_sw_ifc
+type float
+units K day^-1
+long_name "Heating rate due to solar radiation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name heating_sw_lyr
+type float
+units K day^-1
+long_name "Heating rate due to solar radiation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name heating_lw_ifc
+type float
+units K day^-1
+long_name "Heating rate due to terrestrial radiation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name heating_lw_lyr
+type float
+units K day^-1
+long_name "Heating rate due to terrestrial radiation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name heating_sw_cs_ifc
+type float
+units K day^-1
+long_name "Clear-sky Heating rate due to solar radiation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name heating_sw_cs_lyr
+type float
+units K day^-1
+long_name "Clear-sky Heating rate due to solar radiation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name heating_lw_cs_ifc
+type float
+units K day^-1
+long_name "Clear-sky Heating rate due to terrestrial radiation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name heating_lw_cs_lyr
+type float
+units K day^-1
+long_name "Clear-sky Heating rate due to terrestrial radiation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name heating_latent_ifc
+type float
+units K day^-1
+long_name "Heating rate due to water phase change"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name heating_latent_lyr
+type float
+units K day^-1
+long_name "Heating rate due to water phase change"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name qwv_tend_micro_ifc
+type float
+units kg/kg sec^-1
+long_name "Water vapor tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name qwv_tend_micro_lyr
+type float
+units kg/kg sec^-1
+long_name "Water vapor tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name qci_tend_micro_ifc
+type float
+units kg/kg sec^-1
+long_name "Cloud water tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name qci_tend_micro_lyr
+type float
+units kg/kg sec^-1
+long_name "Cloud ice tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name qcw_tend_micro_ifc
+type float
+units kg/kg sec^-1
+long_name "Cloud ice tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name qcw_tend_micro_lyr
+type float
+units kg/kg sec^-1
+long_name "Cloud water tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name qrw_tend_micro_ifc
+type float
+units kg/kg sec^-1
+long_name "Rain water tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name qrw_tend_micro_lyr
+type float
+units kg/kg sec^-1
+long_name "Rain water tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name qsn_tend_micro_ifc
+type float
+units kg/kg sec^-1
+long_name "Snow tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name qsn_tend_micro_lyr
+type float
+units kg/kg sec^-1
+long_name "Snow tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name qgr_tend_micro_ifc
+type float
+units kg/kg sec^-1
+long_name "Graupel tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name qgr_tend_micro_lyr
+type float
+units kg/kg sec^-1
+long_name "Graupel tendency due to microphysics"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+name prec_frz 
+type float
+units mm s^-1
+long_name "Frozen precipitation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+dimension time cells
+
+name prec_tot 
+type float
+units mm s^-1
+long_name "Total precipitation"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+dimension time cells
+
+name olr
+type float
+units W m^-2
+long_name "TOA Outgoing longwave radiation flux (all-sky)"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+dimension time cells
+
+name swinc
+type float
+units W m^-2
+long_name "TOA incident solar radiation flux"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+dimension time cells
+
+name heat_flux_vdiff_ifc
+type float
+units W m^-2
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+long_name "Upward heat flux due to turbulence"
+dimension time cells interfaces
+
+name heat_flux_vdiff_lyr
+type float
+units W m^-2
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+long_name "Upward heat flux due to turbulence"
+dimension time cells layers
+
+name wtr_flux_vdiff_ifc
+type float
+units W m^-2
+long_name "Upward latent heat flux due to turbulence"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z interfaces
+dimension time cells interfaces
+
+name wtr_flux_vdiff_lyr
+type float
+units W m^-2
+long_name "Upward latent heat flux due to turbulence"
+coordinates "grid_center_lat grid_center_lon"
+grid grid
+location center
+z layers
+dimension time cells layers
+
+
+name dbl_eta
+type       double
+units      sec**-1
+long_name  "eta array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension time cells layers nprog
+restart
+
+
+name dbl_eta_f
+type       double
+units      sec**-1
+long_name  "eta_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+type double
+restart
+
+
+name dbl_relative
+type       double
+units      sec**-1
+long_name  "relative array in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+dimension  time cells layers
+restart
+
+
+name dbl_psi
+type       double
+long_name  "psi array in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+dimension  time cells layers
+restart
+
+
+name dbl_chi
+type       double
+long_name "chi array in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+dimension time cells layers
+restart
+
+
+name dbl_tht_ifc
+type       double
+units      K
+long_name  "tht ifc array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension   time cells interfaces nprog
+restart
+
+
+name dbl_tht_ifc_f
+type       double
+units      K
+long_name  "tht_f ifc array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces ntend
+restart
+
+
+name dbl_tht_lyr
+type       double
+units      K
+long_name  "tht lyr array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension   time cells layers nprog
+restart
+
+
+name dbl_tht_lyr_f
+type       double
+units      K
+long_name  "tht_f lyr array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_div
+type       double
+units      sec**-1
+long_name  "div array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers nprog
+restart
+
+
+name dbl_div_f
+type       double
+units      sec**-1
+long_name  "div_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_w
+type       double
+units      sec**-1
+long_name  "w array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces nprog
+restart
+
+
+name dbl_w_f
+type       double
+units      sec**-1
+long_name  "w_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces ntend
+restart
+
+
+name dbl_rho
+type       double
+units      sec**-1
+long_name  "rho array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers nprog
+restart
+
+
+name dbl_mss
+type       double
+units      sec**-1
+long_name  "mss array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+index       all
+dimension  time cells nprog
+restart
+
+
+name dbl_rho_f
+type       double
+units      sec**-1
+long_name  "rho_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_rho_adv
+type       double
+units      sec**-1
+long_name  "rho_adv array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers nprog
+restart
+
+
+name dbl_rho_adv_f
+type       double
+units      sec**-1
+long_name  "rho_adv_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_exn_lyr
+type       double
+units      sec**-1
+long_name  "exn_lyr array"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+dimension  time cells layers
+restart
+
+
+name dbl_exn_prm
+type       double
+units      sec**-1
+long_name  "exn_prm array"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+dimension  time cells layers
+restart
+
+
+name dbl_prs_lyr
+type       double
+units      Pa
+long_name  "prs_lyr array"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+dimension  time cells layers
+restart
+
+
+name dbl_exn_ifc
+type       double
+units      sec**-1
+long_name  "exn array"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+dimension  time cells interfaces
+restart
+
+
+name dbl_prs_ifc
+type       double
+units      Pa
+long_name  "prs array"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+dimension  time cells interfaces
+restart
+
+
+name dbl_ts
+type       double
+units      sec**-1
+long_name  "temperature of earth surface"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+dimension  time cells
+restart
+
+
+name dbl_gwet
+type       double
+units      sec**-1
+long_name  "wetness of earth surface"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+dimension  time cells
+restart
+
+
+name dbl_zrough
+type       double
+units      sec**-1
+long_name  "roughness length of earth surface"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+dimension  time cells
+restart
+
+
+name dbl_vapor_lyr
+type       double
+units      sec**-1
+long_name  "water_vapor_lyr array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers nprog
+restart
+
+
+name dbl_vapor_lyr_f
+type       double
+units      sec**-1
+long_name  "water_vapor_lyr_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_vapor_ifc
+type       double
+units      sec**-1
+long_name  "water_vapor_ifc array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces nprog
+restart
+
+
+name dbl_vapor_ifc_f
+type       double
+units      sec**-1
+long_name  "water_vapor_ifc_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces ntend
+restart
+
+
+name dbl_cloudice_lyr
+type       double
+units      sec**-1
+long_name  "cloudice_lyr array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers nprog
+restart
+
+
+name dbl_cloudice_lyr_f
+type       double
+units      sec**-1
+long_name  "cloudice_lyr_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_cloudice_ifc
+type       double
+units      sec**-1
+long_name  "cloudice_ifc array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces nprog
+restart
+
+
+name dbl_cloudice_ifc_f
+type       double
+units      sec**-1
+long_name  "cloudice_ifc_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces ntend
+restart
+
+
+name dbl_cloudwater_lyr
+type       double
+units      sec**-1
+long_name  "cloudwater_lyr array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers nprog
+restart
+
+
+name dbl_cloudwater_lyr_f
+type       double
+units      sec**-1
+long_name  "cloudwater_lyr_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_cloudwater_ifc
+type       double
+units      sec**-1
+long_name  "cloudwater_ifc array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces nprog
+restart
+
+
+name dbl_cloudwater_ifc_f
+type       double
+units      sec**-1
+long_name  "cloudwater_ifc_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces ntend
+restart
+
+
+name dbl_snowmmr_lyr
+type       double
+units      sec**-1
+long_name  "snowmmr_lyr array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers nprog
+restart
+
+
+name dbl_snowmmr_lyr_f
+type       double
+units      sec**-1
+long_name  "snowmmr_lyr_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_snowmmr_ifc
+type       double
+units      sec**-1
+long_name  "snowmmr_ifc array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces nprog
+restart
+
+
+name dbl_snowmmr_ifc_f
+type       double
+units      sec**-1
+long_name  "snowmmr_ifc_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces ntend
+restart
+
+
+name dbl_rainmmr_lyr
+type       double
+units      sec**-1
+long_name  "rainmmr_lyr array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers nprog
+restart
+
+
+name dbl_rainmmr_lyr_f
+type       double
+units      sec**-1
+long_name  "rainmmr_lyr_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_rainmmr_ifc
+type       double
+units      sec**-1
+long_name  "rainmmr_ifc array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces nprog
+restart
+
+
+name dbl_rainmmr_ifc_f
+type       double
+units      sec**-1
+long_name  "rainmmr_ifc_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces ntend
+restart
+
+
+name dbl_graupelmmr_lyr
+type       double
+units      sec**-1
+long_name  "graupelmmr_lyr array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers nprog
+restart
+
+
+name dbl_graupelmmr_lyr_f
+type       double
+units      sec**-1
+long_name  "graupelmmr_lyr_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           layers
+index       all
+dimension  time cells layers ntend
+restart
+
+
+name dbl_graupelmmr_ifc
+type       double
+units      sec**-1
+long_name  "graupelmmr_ifc array, subscript nprog=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces nprog
+restart
+
+
+name dbl_graupelmmr_ifc_f
+type       double
+units      sec**-1
+long_name  "graupelmmr_ifc_f array, subscript ntend=1 in model"
+coordinates "grid_center_lat grid_center_lon"
+grid        grid
+location    center 
+z           interfaces
+index       all
+dimension  time cells interfaces ntend
+restart
+
+
+
+
+

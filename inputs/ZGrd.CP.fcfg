@@ -1,0 +1,152 @@
+#
+file_prefix "rel_vorticity_"
+field     time
+field     relative
+#
+file_prefix "vel_pot_"
+field     time
+field     vel_pot
+#
+file_prefix "strm_func_"
+field     time
+field     strm_func
+#
+file_prefix "divergence_"
+field     time
+field     divergence
+#
+file_prefix "ke_"
+field     time
+field     ke
+#
+file_prefix "w_vert_"
+field     time
+field     w_vert
+#
+file_prefix "vorticity_"
+field     time
+field     vorticity
+#
+file_prefix "mass_"
+field     time
+field     mass
+#
+file_prefix "pressure_"
+field     time
+field     pressure
+#
+file_prefix "temperature_"
+field     time
+field     temperature_ifc
+#
+file_prefix "geopotential_"
+field     time
+field     geopotential
+#
+file_prefix "wind_crn_ns_"
+field     time
+field     u
+#
+file_prefix "wind_crn_ew_"
+field     time
+field     v
+#
+file_prefix "wind_"
+field     time
+field     wind
+#
+file_prefix "exner_ifc_"
+field     time
+field     exner_ifc
+#
+file_prefix "water_vapor_"
+field     time
+field     water_vapor_ifc
+#
+file_prefix "cloud_water_"
+field     time
+field     cloud_water_ifc
+#
+file_prefix "rain_mmr_"
+field     time
+field     rain_mmr_ifc
+#
+file_prefix "cloud_ice_"
+field     time
+field     cloud_ice_ifc
+#
+file_prefix "snow_mmr_"
+field     time
+field     snow_mmr_ifc
+#
+file_prefix "graupel_mmr_"
+field     time
+field     graupel_mmr_ifc
+#
+file_prefix "heating_sw_"
+field     time
+field     heating_sw_ifc avg
+#
+file_prefix "heating_lw_"
+field     time
+field     heating_lw_ifc avg
+#
+file_prefix "heating_sw_cs_"
+field     time
+field     heating_sw_cs_ifc avg
+#
+file_prefix "heating_lw_cs_"
+field     time
+field     heating_lw_cs_ifc avg
+#
+file_prefix "heating_latent_"
+field     time
+field     heating_latent_ifc avg
+#
+file_prefix "qwv_tend_micro_"
+field     time
+field     qwv_tend_micro_ifc avg
+#
+file_prefix "qci_tend_micro_"
+field     time
+field     qci_tend_micro_ifc avg
+#
+file_prefix "qcw_tend_micro_"
+field     time
+field     qcw_tend_micro_ifc avg
+#
+file_prefix "qrw_tend_micro_"
+field     time
+field     qrw_tend_micro_ifc avg
+#
+file_prefix "qsn_tend_micro_"
+field     time
+field     qsn_tend_micro_ifc avg
+#
+file_prefix "qgr_tend_micro_"
+field     time
+field     qgr_tend_micro_ifc avg
+#
+file_prefix "prec_tot_"
+field     time
+field     prec_tot avg
+#
+file_prefix "prec_frz_"
+field     time
+field     prec_frz avg
+#
+file_prefix "olr_"
+field     time
+field     olr avg
+#
+file_prefix "swinc_"
+field     time
+field     swinc avg
+#
+file_prefix "heat_flux_vdiff_"
+field     time
+field     heat_flux_vdiff_lyr avg
+#
+file_prefix "wtr_flux_vdiff_"
+field     time
+field     wtr_flux_vdiff_lyr avg

@@ -1,0 +1,43 @@
+# all grid variables, indicated as "isgridvar" in ZGrd.desc
+	int grid ;
+	float layers(layers) ;
+	float interfaces(interfaces) ;
+	float grid_center_lat(cells) ;
+	float grid_center_lon(cells) ;
+	float grid_corner_lat(corners) ;
+	float grid_corner_lon(corners) ;
+	float grid_edge_lat(edges) ;
+	float grid_edge_lon(edges) ;
+	int cell_corners(cells, cellcorners) ;
+	int cell_edges(cells, celledges) ;
+	int edge_corners(edges, endpoints) ;
+	int cell_neighbors(cells, cellneighbors) ;
+	float area(cells) ;
+	float corner_cell_map_lat(cells, cellcorners) ;
+	float corner_cell_map_lon(cells, cellcorners) ;
+
+The topology consists of three primary arrays:
+  1. a mapping between cells and cell corners,
+     cell_corners(cells,cellcorners=6),
+  2. a mapping between cells and cell edges,
+     cell_edges(cells,celledges=6), and
+  3. a mapping between edges and corners,
+     edge_corners(edges,edgecorners=2)
+Because neighbor lists are important for visualization programs but
+difficult to generate in the general case, they are included as part
+of the topology as the
+  4. cell_neighbors(cells,neighbors=6)
+
+
+The vertical grid consists of layers sandwiched between
+interfaces with the number of layers equal to the number of
+interfaces minus 1. I.e.
+    interface
+    layer
+    interface
+    layer
+    interface
+    layer
+    interface
+    layer
+    interface

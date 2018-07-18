@@ -1,0 +1,1 @@
+mpiexec -l -n 20 ./gcrm_io

@@ -1,0 +1,98 @@
+! To perform large-scale evaluations, run the combinations below:
+!     nsdm = 1 (one grid block per process)
+!         nprocs =    160, level_max =  7
+!         nprocs =    640, level_max =  8
+!         nprocs =   2560, level_max =  9
+!         nprocs =  10240, level_max = 10
+!         nprocs =  40960, level_max = 11
+!         nprocs = 163840, level_max = 12
+!     nsdm = 2 (two grid blocks per process)
+!         nprocs =     80, level_max =  7
+!         nprocs =    320, level_max =  8
+!         nprocs =   1280, level_max =  9
+!         nprocs =   5120, level_max = 10
+!         nprocs =  20480, level_max = 11
+!         nprocs =  81920, level_max = 12
+!
+! Three variable-to-file mappings, with physics_mode set to enabled:
+!     io_config_file ZGrd.CP.lyr.fcfg        (one var per file)
+!     io_config_file ZGrd.CP.lyr.fcfg.groups (group vars into files)
+!     io_config_file ZGrd.CP.lyr.fcfg.one    (all var one file)
+!
+
+! Sample input file for zgrd code
+
+level_max 9
+
+output_path /scratch2/scratchdirs/wkliao/FS_1M_128/  ! Path for miscellaneous outputs
+
+end_days    0              ! Number of days to run model;  must be integer  
+end_hours   0              ! Number of hours to run model;  must be integer  
+end_hours   0              ! Number of hours to run model;  must be integer  
+end_minutes 0              ! Number of hours to run model;  must be integer  
+end_seconds 8              ! Number of hours to run model;  must be integer  
+
+data_path ./               ! Path for miscellaneous inputs
+
+initial_condition 0        ! This is the only (non) initial condition
+
+! physics_mode disabled
+physics_mode enabled
+
+!--- IO Control Options ----------------------------------------------------
+! options for iotype are: nonblocking_collective, nonblocking_indepedent,
+!                         blocking_collective, and blocking_independent
+iotype           nonblocking_collective
+io_procs         4              ! ignored by this benchmark code
+io_desc_file     ZGrd.desc
+
+!
+! * ZGrd.LZ.fcfg.nophys writes 11 solution variables, one variable per file,
+!                       no physics vriables. Use it for testing only.
+! * ZGrd.CP.lyr.fcfg writes 38 solution variables, one per nc file.
+!                       It can only be used when physics_mode is enabled.
+! * ZGrd.CP.lyr.fcfg.groups writes 38 solution variables in 12 nc files, some
+!                       variables that are often accessed together are
+!                       saved in the same file. It can only be used when
+!                       physics_mode is enabled.
+! * ZGrd.CP.lyr.fcfg.one writes 38 solution variables in one nc file, all
+!                       variables are saved in the same file. It can only be
+!                       used when physics_mode is enabled.
+!
+! io_config_file ZGrd.LZ.fcfg.nophys
+io_config_file ZGrd.CP.lyr.fcfg
+! io_config_file ZGrd.CP.lyr.fcfg.groups
+! io_config_file ZGrd.CP.lyr.fcfg.one
+
+clusdet_enable   false     ! turn on I/O agent cluster detection
+
+!--- History Output Options--------------------------------------------------
+! These values will be used for history files unless specified in atmos.fcfg. 
+
+cdf_output_path /scratch2/scratchdirs/wkliao/FS_1M_128/  ! Path for netcdf output file
+
+! cdf_output_frequency is the frequency in seconds to save history data
+!     check file ZGrd/ZGrd_params_time.F90 for idt_ZGrd(0), this is the amount
+!     of time advanced in each simulation iteration
+!     for level_max =   3,   4,  5,  6,  7, 8, 9, 10, 11, 12
+!       idt_ZGrd(0) = 900, 120, 60, 30, 15, 8, 4,  2,  1,  1
+!     cdf_output_frequency shall be set to a multiple of idt_ZGrd(0)
+! 
+cdf_output_frequency 4
+
+cdf_output_nsamples  8          ! Number of samples written to each netCDF file
+cdf_grid_option      sep_grid   ! all_files | nogrid | sep_grid
+cdf_sep_grid         grid       ! grid file name if sep_grid specified
+
+!
+!--- Restart Options---------------------------------------------------------
+! Restart files are managed by GIO. More detailed options are available 
+! in the gio .desc and .fcfg file Values specified in here override 
+! values is the GIO files
+
+use_binary_restart false       ! false means use GIO restart
+read_restart       false       ! turn reading of restart files on or off
+restart_interval   4           ! Interval in seconds to write restart files. (0 turns off)
+restart_input      restart.nc  ! Name of file; date will be added to name if restart_overwrite = false
+restart_output     restart.nc
+restart_overwrite  false       ! true => restart file overwritten at each restart write interval

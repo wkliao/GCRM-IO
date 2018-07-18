@@ -1,0 +1,44 @@
+#
+file_prefix "rel_vorticity_"
+field     time
+field     relative
+#
+file_prefix "vorticity_"
+field     time
+field     vorticity
+#
+file_prefix "mass_"
+field     time
+field     mass
+#
+file_prefix "pressure_"
+field     time
+field     pressure
+#
+file_prefix "temperature_"
+field     time
+field     temperature_lyr
+#
+file_prefix "geopotential_"
+field     time
+field     geopotential
+#
+file_prefix "wind_crn_ns_"
+field     time
+field     u
+#
+file_prefix "wind_crn_ew_"
+field     time
+field     v
+#
+file_prefix "wind_"
+field     time
+field     wind
+#
+file_prefix "exner_"
+field     time
+field     exner_lyr
+#
+file_prefix "clus_mask_"
+field     time
+field     clus_mask
