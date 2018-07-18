@@ -7,9 +7,9 @@
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS      = src . run
-DIST_SUBDIRS = src doc run inputs
+DIST_SUBDIRS = src run
 
-EXTRA_DIST = ACKNOWLEDGEMENTS README.md
+EXTRA_DIST = ACKNOWLEDGEMENTS README.md RELEASE_NOTES doc inputs
 
 # For VPATH build (parallel build), try delete all sub-directories
 distclean-local:
@@ -19,14 +19,15 @@ distclean-local:
            done ; \
         fi
 
-install-data-hook:
+install-exec-hook:
 	@echo '+----------------------------------------------------------------------------+'
 	@echo '|'
 	@echo '|  GCRM-IO has been successfully installed under'
-	@echo '|          $(DESTDIR)/run'
+	@echo '|        ./run'
 	@echo '|'
 	@echo '|  * The executable name: gcrm_io'
-	@echo '|  * Addition input parameter files are available under $(abs_srcdir)/inputs'
+	@echo '|  * Addition input parameter files are available under'
+	@echo '|        $(abs_srcdir)/inputs'
 	@echo '|'
 	@echo '+----------------------------------------------------------------------------+'
 

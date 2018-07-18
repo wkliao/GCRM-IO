@@ -4,7 +4,7 @@
 #
 # @configure_input@
 
-bin_PROGRAMS = gcrm_io
+noinst_PROGRAMS = gcrm_io
 
 gcrm_io_SOURCES = gcrm_param_init.c \
                   read_param.c  \
@@ -65,5 +65,5 @@ EXTRA_DIST = ZGrd_clusdet.h \
              wrap_data.h
 
 dist-hook:
-	$(SED_I) -e "s|RELEASE_DATE|`date '+%e %b %Y'`|g"    $(distdir)/pnetcdf_version.c
+	$(SED_I) -e "s|RELEASE_DATE|`date '+%e %b %Y'`|g" $(distdir)/main.c
 

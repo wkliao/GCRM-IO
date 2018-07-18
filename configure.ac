@@ -246,12 +246,42 @@ AC_PREFIX_DEFAULT([${PWD}/run])
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
+dnl
+dnl Check how sed command handling in-place option -i and define SED_I
+dnl
+AC_DEFUN([UD_PROG_SED_I],
+[
+   AC_REQUIRE([AC_PROG_SED])
+   AC_CACHE_CHECK([for sed handling option -i ], ac_cv_SED_I,[
+   cat > conftest.sed_i <<EOF
+   test str1
+EOF
+   ac_cv_err=`$SED -i '' -e 's|str1|str2|g' conftest.sed_i 2>&1`
+   if test "x$ac_cv_err" = x ; then
+      ac_cv_SED_I="$SED -i ''"
+   else
+      ac_cv_err=`sed -i'' -e 's|str1|str2|g' conftest.sed_i 2>&1`
+      if test "x$ac_cv_err" = x ; then
+         ac_cv_SED_I="$SED -i''"
+      else
+         AC_MSG_ERROR("No proper sed -i option found")
+      fi
+   fi
+   AS_UNSET(ac_cv_err)])
+   SED_I="$ac_cv_SED_I"
+   AC_SUBST(SED_I)
+   rm -f conftest.sed_i
+])
+
+dnl AC_PROG_SED and AC_PROG_GREP are only available on autoconf 2.60 and later
+AC_PROG_SED
+dnl check sed command option -i and set SED_I
+UD_PROG_SED_I
+
 dnl tell autoconf the locations of all Makefile templates, .in or .am files
 dnl AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([Makefile
                  src/Makefile
-                 inputs/Makefile
-                 doc/Makefile
                  run/Makefile])
 AC_OUTPUT
 echo \
@@ -268,8 +298,5 @@ echo \
    Package features:
       GCRM I/O kernel: PnetCDF from '${PNETCDF_INSTALL}'
 
-   Now type 'make @<:@<target>@:>@'
-      where the optional <target> is:
-          all     - build the executable gcrm_io in ./src
-          install - install gcrm_io and input files
+   Now run 'make' to build the executable gcrm_io in ./run
 ---------------------------------------------------------------------"

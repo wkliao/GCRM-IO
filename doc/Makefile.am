@@ -4,6 +4,8 @@
 #
 # @configure_input@
 
+all:
+
 EXTRA_DIST = all_variables.txt \
              grid_vars.txt \
              data_summary.pdf \
