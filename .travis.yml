@@ -4,7 +4,7 @@ env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
    #   via the "travis encrypt" command using the project repo's public key
-   - secure: "UsLbw9PXd0Rrs6/rIe+uEfQK/pOAJpmc03gOQObqrazylGI88XzPKpJfUUTgk0F4yXd0cb3xwIp47DGV2rhWWtNnqqd23mWZts3jDKp+uHaLMKlHmGBP5kfKzFsIeo7uzXbIzbhIgYCJ0Enofnz2ujizQra8Cvi+17CvovUWhuQ="
+   - secure: "kzo4Dia4DortrO3vguzr0Ku/zGhWIfdkBf6bcS4xZy+aqkjGU/gVKThoSfcgPAsfkLUHnTOmt8pFL4jvWwkoThnpboYyubxhTPSeAvikcJaUUYhiCp/KZKQ+GCWg+uQQNnMq1AJvt4kQC1XeDElopFTsuApjB35L7juPXMS0l2OWQ5t1MMQlOTRgwwxWLbK3+2V21pZ7bfVcz1Ng8EPH6BFyl/mDi+sC0GPeCONg9D06bqQLGWNo/j5NTyOegDa4kxY3gA7tdPjPj90EH/zyH9eagAlpXzXOxKEM0Wu8ITeOYtbMwdWpR79au1mEg5HrNDIP7XK4QTNW689LUqhifbCGNP83PfHWQrzRGKlQL8VDaNGfml0ryFiXs1ZiAhZh+ltvmHZL04VM4RjamL4R6OA/rhPSDhWxgV/XrFOeZyhZOFDJ+KO7oBNAaTViBFZreC5Y2fw/LNglsKr2KSz9gEvFhD5WQXksju5I97F/vSMVXt5xUDaSrXGVWx0rUkHjVApVW3DojVpzHbi8+UW6BT5EA0ot76JgA/Zba5DeMFCJr3lwDWMOyq83bFu8T6ukWFmzbcX1phbkeWlpqf0BrXSWevGmB/oUwfonR2RaWwU7D3ytp1451o+vF7YDJ9YhfbZBSJQB/53SWgwIH998gsCZFk1yFd3hBhBYTiil6V4="
 
 addons:
   coverity_scan:
@@ -13,9 +13,9 @@ addons:
     project:
       name: "GCRM-IO"
       description: "GCRM-IO nightly build submitted via Travis CI / Coverity Scan"
-    build_command_prepend:
+    build_command_prepend: ./configure --with-pnetcdf=/home/travis/build/wkliao
     notification_email: wkliao@eecs.northwestern.edu
-    build_command:
+    build_command: make
     branch_pattern: master
 
 before_install:
@@ -39,11 +39,11 @@ before_script:
   - git clone https://github.com/Parallel-NetCDF/PnetCDF.git
   - cd PnetCDF
   - autoreconf -i
-  - ./configure --prefix=/home/travis/build/wkliao
+  - ./configure --prefix=/home/travis/build/wkliao --disable-fortran --disable-cxx
   -  make -s install
 
 script:
-  # continue the above "build_command" for static library only (default)
+  # continue the above "build_command"
   - ./configure --with-pnetcdf=/home/travis/build/wkliao
   - make
 
