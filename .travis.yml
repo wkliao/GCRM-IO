@@ -39,8 +39,8 @@ before_script:
   - git clone https://github.com/Parallel-NetCDF/PnetCDF.git
   - cd PnetCDF
   - autoreconf -i
-  - ./configure --prefix=/home/travis/build/wkliao --disable-fortran --disable-cxx
-  - make -s install
+  - ./configure --silent --prefix=/home/travis/build/wkliao --disable-fortran --disable-cxx
+  - make -s LIBTOOLFLAGS=--silent V=1 install
   - cd /home/travis/build/wkliao
   - ls -lR bin lib include share
 
@@ -52,9 +52,13 @@ script:
 
 after_success:
   - make -s distclean
+  - cd /home/travis/build/wkliao
+  - rm -rf PnetCDF bin include lib share
 
 after_failure:
   - make -s distclean
+  - cd /home/travis/build/wkliao
+  - rm -rf PnetCDF bin include lib share
 
 notifications:
   email: false
