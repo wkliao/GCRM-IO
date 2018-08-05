@@ -11,9 +11,9 @@ addons:
     # GitHub project metadata
     # ** specific to your project **
     project:
-      name: "GCRM-IO"
+      name: "wkliao/GCRM-IO"
       description: "GCRM-IO nightly build submitted via Travis CI / Coverity Scan"
-    build_command_prepend: ./configure --with-pnetcdf=/home/travis/build/wkliao
+    build_command_prepend: "./configure --with-pnetcdf=/home/travis/build/wkliao"
     notification_email: wkliao@eecs.northwestern.edu
     build_command: make
     branch_pattern: master
@@ -41,7 +41,8 @@ before_script:
   - autoreconf -i
   - ./configure --prefix=/home/travis/build/wkliao --disable-fortran --disable-cxx
   - make -s install
-  - ls -lR /home/travis/build/wkliao
+  - cd /home/travis/build/wkliao
+  - ls -lR bin lib include share
 
 script:
   # continue the above "build_command"
