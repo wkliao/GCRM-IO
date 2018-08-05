@@ -1,0 +1,49 @@
+language: c
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "UsLbw9PXd0Rrs6/rIe+uEfQK/pOAJpmc03gOQObqrazylGI88XzPKpJfUUTgk0F4yXd0cb3xwIp47DGV2rhWWtNnqqd23mWZts3jDKp+uHaLMKlHmGBP5kfKzFsIeo7uzXbIzbhIgYCJ0Enofnz2ujizQra8Cvi+17CvovUWhuQ="
+
+addons:
+  coverity_scan:
+    # GitHub project metadata
+    # ** specific to your project **
+    project:
+      name: "GCRM-IO"
+      description: "GCRM-IO nightly build submitted via Travis CI / Coverity Scan"
+    build_command_prepend: ./configure
+    notification_email: wkliao@eecs.northwestern.edu
+    build_command: make
+    branch_pattern: master
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - test -n $CC && unset CC
+  # apt-package-whitelist can be found in
+  # https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
+  - sudo add-apt-repository ppa:dns/gnu -y
+  - sudo apt-get update -qq
+  - sudo apt-get install -y mpich2
+  - sudo apt-get install -y pnetcdf
+  - sudo apt-get install --only-upgrade autoconf
+  - sudo apt-get install --only-upgrade automake
+  - sudo apt-get install --only-upgrade libtool
+  - autoconf --version
+  - automake --version
+  - libtool --version
+  - autoreconf -i
+
+script:
+  # continue the above "build_command" for static library only (default)
+  - make
+
+after_success:
+  - make -s distclean
+
+after_failure:
+  - make -s distclean
+
+notifications:
+  email: false
