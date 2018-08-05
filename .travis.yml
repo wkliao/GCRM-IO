@@ -40,10 +40,12 @@ before_script:
   - cd PnetCDF
   - autoreconf -i
   - ./configure --prefix=/home/travis/build/wkliao --disable-fortran --disable-cxx
-  -  make -s install
+  - make -s install
+  - ls -lR /home/travis/build/wkliao
 
 script:
   # continue the above "build_command"
+  - cd /home/travis/build/wkliao/GCRM-IO
   - ./configure --with-pnetcdf=/home/travis/build/wkliao
   - make
 
