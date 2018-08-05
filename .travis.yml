@@ -13,9 +13,9 @@ addons:
     project:
       name: "GCRM-IO"
       description: "GCRM-IO nightly build submitted via Travis CI / Coverity Scan"
-    build_command_prepend: ./configure
+    build_command_prepend:
     notification_email: wkliao@eecs.northwestern.edu
-    build_command: make
+    build_command:
     branch_pattern: master
 
 before_install:
@@ -26,7 +26,6 @@ before_install:
   - sudo add-apt-repository ppa:dns/gnu -y
   - sudo apt-get update -qq
   - sudo apt-get install -y mpich2
-  - sudo apt-get install -y pnetcdf
   - sudo apt-get install --only-upgrade autoconf
   - sudo apt-get install --only-upgrade automake
   - sudo apt-get install --only-upgrade libtool
@@ -35,8 +34,14 @@ before_install:
   - libtool --version
   - autoreconf -i
 
+before_script:
+  - pwd
+  - git clone https://github.com/Parallel-NetCDF/PnetCDF.git
+  - cd PnetCDF ; autoreconf -i; ./configure --prefix=.. ; make -s install
+
 script:
   # continue the above "build_command" for static library only (default)
+  - ./configure --with-pnetcdf=.
   - make
 
 after_success:
