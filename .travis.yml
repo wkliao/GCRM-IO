@@ -50,11 +50,10 @@ script:
   # continue the above "build_command"
   - pwd
   - cd /home/travis/build/wkliao/GCRM-IO
-  - ./configure --with-pnetcdf=/home/travis/build/wkliao
+  - ls -lR .
   - make -s DISTCHECK_CONFIGURE_FLAGS="--silent --with-pnetcdf=/home/travis/build/wkliao" distcheck
 
 after_success:
-  - ls -l run
   - make -s distclean
   - cd /home/travis/build/wkliao
   - rm -rf PnetCDF bin include lib share
