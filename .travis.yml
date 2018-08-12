@@ -36,24 +36,25 @@ before_install:
 
 before_script:
   - pwd
-  - echo "HOME=$HOME"
-  - cd /home/travis/build/wkliao
+  - cd ..
   - git clone https://github.com/Parallel-NetCDF/PnetCDF.git
   - cd PnetCDF
   - autoreconf -i
   - ./configure --silent --prefix=/home/travis/build/wkliao --disable-fortran --disable-cxx
-  - make -s LIBTOOLFLAGS=--silent V=1 install
-  - cd /home/travis/build/wkliao
+  - make -s -j4 install
+  - cd ..
   - ls -lR bin lib include share
-  - cd /home/travis/build/wkliao/GCRM-IO
+  - cd GCRM-IO
 
 script:
   # continue the above "build_command"
+  - pwd
   - cd /home/travis/build/wkliao/GCRM-IO
   - ./configure --with-pnetcdf=/home/travis/build/wkliao
-  - make
+  - make -s DISTCHECK_CONFIGURE_FLAGS="--silent --with-pnetcdf=/home/travis/build/wkliao" distcheck
 
 after_success:
+  - ls -l run
   - make -s distclean
   - cd /home/travis/build/wkliao
   - rm -rf PnetCDF bin include lib share
