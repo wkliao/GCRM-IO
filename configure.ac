@@ -18,7 +18,7 @@ VERSION_MINOR=`echo ${PACKAGE_VERSION} | cut -d. -f2`
 VERSION_SUB=`echo ${PACKAGE_VERSION} | cut -d. -f3`
 
 dnl Note major, minor, and sub are required
-VERSION=${PACKAGE_VERSION}
+VERSION=$PACKAGE_VERSION
 
 AC_SUBST(VERSION_MAJOR)
 AC_SUBST(VERSION_MINOR)
@@ -44,7 +44,7 @@ AC_DEFUN([UD_MSG_DEBUG],
          ]
 )
 
-AC_ARG_VAR(MPICC,  [MPI C compiler, @<:@default: CC@:>@])
+AC_ARG_VAR(MPICC, [MPI C compiler, @<:@default: CC@:>@])
 ac_user_MPICC=$MPICC
 if test "x$MPICC" = x -a "x$CC" != x ; then ac_user_MPICC=$CC ; fi
 
@@ -168,9 +168,6 @@ dnl compute canonical system types
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
-dnl Checks for libraries.
-AC_CHECK_LIB([m], [atan2])
-
 PNETCDF_INSTALL=""
 AC_ARG_WITH(pnetcdf,
     [AS_HELP_STRING([--with-pnetcdf=/path/to/implementation],
@@ -186,15 +183,18 @@ if test "x${PNETCDF_INSTALL}" != x ; then
     AC_MSG_CHECKING(PnetCDF library)
     CPPFLAGS+=" -I${PNETCDF_INSTALL}/include"
     LDFLAGS+=" -L${PNETCDF_INSTALL}/lib"
-    LIBS+=" -lpnetcdf"
 fi
 
 have_pnetcdf=no
-AC_SEARCH_LIBS([ncmpi_create], [pnetcdf], [have_pnetcdf=yes])
+dnl AC_SEARCH_LIBS([ncmpi_create], [pnetcdf], [have_pnetcdf=yes])
+AC_CHECK_LIB([pnetcdf], [ncmpi_create], [have_pnetcdf=yes LIBS+=" -lpnetcdf"])
+
+dnl Checks math library and append -lm instead prepend.
+AC_CHECK_LIB([m], [atan2], [LIBS+=" -lm"])
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([stdlib.h string.h sys/time.h unistd.h pnetcdf.h])
+AC_CHECK_HEADERS([stdlib.h string.h sys/time.h unistd.h])
 
 if test "x${have_pnetcdf}" = xyes; then
     AC_CHECK_HEADERS([pnetcdf.h], [], [have_pnetcdf=no])
@@ -288,12 +288,12 @@ echo \
 "--------------------------------------------------------------------
    ${PACKAGE_NAME} Version ${PACKAGE_VERSION}
 
-   Prefix:    '${prefix}'
-   Compiler:  '${MPICC}'
-   CFLAGS:    '${CFLAGS}'
-   CPPFLAGS:  '${CPPFLAGS}'
-   LDFLAGS:   '${LDFLAGS}'
-   LIBS:      '${LIBS}'
+   Install prefix:  ${prefix}
+   MPI C compiler:  ${MPICC}
+   CFLAGS:          ${CFLAGS}
+   CPPFLAGS:        ${CPPFLAGS}
+   LDFLAGS:         ${LDFLAGS}
+   LIBS:            ${LIBS}
 
    Package features:
       GCRM I/O kernel: PnetCDF from '${PNETCDF_INSTALL}'
