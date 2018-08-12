@@ -43,6 +43,7 @@ before_script:
   - make -s LIBTOOLFLAGS=--silent V=1 install
   - cd /home/travis/build/wkliao
   - ls -lR bin lib include share
+  - cd /home/travis/build/wkliao/GCRM-IO
 
 script:
   # continue the above "build_command"
