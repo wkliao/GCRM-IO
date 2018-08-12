@@ -36,6 +36,8 @@ before_install:
 
 before_script:
   - pwd
+  - echo "HOME=$HOME"
+  - cd /home/travis/build/wkliao
   - git clone https://github.com/Parallel-NetCDF/PnetCDF.git
   - cd PnetCDF
   - autoreconf -i
